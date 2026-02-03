@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rabbit vs Turtle Race – Have / Has</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    text-align: center;
+  }
+
+  h1 {
+    margin-bottom: 10px;
+  }
+
+  .track {
+    width: 90%;
+    margin: 20px auto;
+    background: #ddd;
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+  }
+
+  .lane {
+    height: 60px;
+    background: white;
+    border-radius: 30px;
+    margin: 15px 0;
+    position: relative;
+  }
+
+  .runner {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    font-size: 40px;
+    transition: left 0.5s ease;
+  }
+
+  .question-box {
+    background: white;
+    width: 90%;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .info {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>🐇 Rabbit vs 🐢 Turtle Race</h1>
+<p><b>Material:</b> Have / Has (16 Questions)</p>
+
+<div class="track">
+  <div class="lane">
+    <div id="rabbit" class="runner">🐇</div>
+  </div>
+  <div class="lane">
+    <div id="turtle" class="runner">🐢</div>
+  </div>
+</div>
+
+<div class="question-box">
+  <p id="question">Click START to begin!</p>
+  <button onclick="answer('have')">HAVE</button>
+  <button onclick="answer('has')">HAS</button>
+  <div class="info" id="info"></div>
+</div>
+
+<button onclick="startGame()">▶ START GAME</button>
+<button onclick="resetGame()">🔄 RESET</button>
+
+<script>
+const TOTAL_STEPS = 16;
+const STEP_WIDTH = 100 / TOTAL_STEPS;
+
+let rabbitStep = 0;
+let turtleStep = 0;
+let currentQuestion = 0;
+let currentTurn = "rabbit";
+
+const questions = [
+  { q: "The rabbit ___ long ears.", a: "has" },
+  { q: "I ___ two brothers.", a: "have" },
+  { q: "She ___ a red bag.", a: "has" },
+  { q: "They ___ a big house.", a: "have" },
+  { q: "My father ___ a car.", a: "has" },
+  { q: "We ___ an English class today.", a: "have" },
+  { q: "The turtle ___ a hard shell.", a: "has" },
+  { q: "You ___ many friends.", a: "have" },
+  { q: "Andi ___ a new bicycle.", a: "has" },
+  { q: "The students ___ books.", a: "have" },
+  { q: "My sister ___ a doll.", a: "has" },
+  { q: "Cats ___ sharp claws.", a: "have" },
+  { q: "He ___ a blue hat.", a: "has" },
+  { q: "We ___ homework today.", a: "have" },
+  { q: "The boy ___ a pet rabbit.", a: "has" },
+  { q: "I ___ an idea.", a: "have" }
+];
+
+function startGame() {
+  currentQuestion = 0;
+  currentTurn = "rabbit";
+  showQuestion();
+  document.getElementById("info").innerText = "Rabbit's turn 🐇";
+}
+
+function showQuestion() {
+  if (currentQuestion >= questions.length) {
+    document.getElementById("question").innerText = "Game Over!";
+    return;
+  }
+  document.getElementById("question").innerText =
+    (currentQuestion + 1) + ". " + questions[currentQuestion].q;
+}
+
+function answer(choice) {
+  if (currentQuestion >= questions.length) return;
+
+  const correct = questions[currentQuestion].a;
+
+  if (choice === correct) {
+    moveForward();
+  }
+
+  switchTurn();
+  currentQuestion++;
+  showQuestion();
+}
+
+function moveForward() {
+  if (currentTurn === "rabbit") {
+    rabbitStep++;
+    document.getElementById("rabbit").style.left =
+      (rabbitStep * STEP_WIDTH) + "%";
+    if (rabbitStep >= TOTAL_STEPS) endGame("🐇 Rabbit");
+  } else {
+    turtleStep++;
+    document.getElementById("turtle").style.left =
+      (turtleStep * STEP_WIDTH) + "%";
+    if (turtleStep >= TOTAL_STEPS) endGame("🐢 Turtle");
+  }
+}
+
+function switchTurn() {
+  currentTurn = currentTurn === "rabbit" ? "turtle" : "rabbit";
+  document.getElementById("info").innerText =
+    currentTurn === "rabbit"
+      ? "Rabbit's turn 🐇"
+      : "Turtle's turn 🐢";
+}
+
+function endGame(winner) {
+  document.getElementById("question").innerText =
+    winner + " wins the race! 🎉";
+  document.getElementById("info").innerText = "Game Finished";
+}
+
+function resetGame() {
+  rabbitStep = 0;
+  turtleStep = 0;
+  currentQuestion = 0;
+  currentTurn = "rabbit";
+  document.getElementById("rabbit").style.left = "0%";
+  document.getElementById("turtle").style.left = "0%";
+  document.getElementById("question").innerText =
+    "Click START to begin!";
+  document.getElementById("info").innerText = "";
+}
+</script>
+
+</body>
+</html>
