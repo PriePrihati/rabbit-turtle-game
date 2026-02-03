@@ -13,14 +13,16 @@ body {
 }
 
 .container {
-  display: grid;
-  grid-template-columns: 1fr 1.3fr 1fr;
-  gap: 10px;
+  display: flex;
   height: 100vh;
   padding: 10px;
+  box-sizing: border-box;
+  gap: 10px;
 }
 
+/* PANEL KIRI & KANAN */
 .panel {
+  width: 25%;
   background: white;
   border-radius: 12px;
   padding: 15px;
@@ -34,6 +36,7 @@ body {
   font-weight: bold;
   text-align: center;
   margin-bottom: 15px;
+  min-height: 60px;
 }
 
 .options button {
@@ -47,20 +50,22 @@ body {
   cursor: pointer;
 }
 
-.options button:hover {
-  background: #bfdbfe;
+.options button:active {
+  background: #93c5fd;
 }
 
+/* ARENA */
 .arena {
-  position: relative;
+  width: 50%;
   background: #bbf7d0;
   border-radius: 12px;
+  position: relative;
 }
 
 .track {
   position: absolute;
-  left: 90px;
-  right: 90px;
+  left: 80px;
+  right: 80px;
   top: 50%;
   height: 6px;
   background: white;
@@ -91,12 +96,12 @@ body {
   width: 80px;
 }
 
-.player.right {
-  top: 60%;
-}
-
 .player.left {
   top: 40%;
+}
+
+.player.right {
+  top: 60%;
 }
 </style>
 </head>
@@ -142,7 +147,6 @@ body {
 </div>
 
 <script>
-/* ===== DATA SOAL ===== */
 const questions = [
   { q: "The rabbit ___ long ears.", a: "has" },
   { q: "I ___ two brothers.", a: "have" },
@@ -165,14 +169,10 @@ const questions = [
 let index = 0;
 let stepLeft = 0;
 let stepRight = 0;
-const WIN = 16;
 
-/* ===== RENDER ===== */
-function renderQuestion() {
-  const q = questions[index];
-  document.getElementById("q-left").innerText = q.q;
-  document.getElementById("q-right").innerText = q.q;
-
+function render() {
+  document.getElementById("q-left").innerText = questions[index].q;
+  document.getElementById("q-right").innerText = questions[index].q;
   createButtons("left");
   createButtons("right");
 }
@@ -180,53 +180,38 @@ function renderQuestion() {
 function createButtons(side) {
   const box = document.getElementById("opts-" + side);
   box.innerHTML = "";
-
-  ["has", "have"].forEach(text => {
+  ["has", "have"].forEach(val => {
     const btn = document.createElement("button");
-    btn.innerText = text.toUpperCase();
-    btn.onclick = function () {
-      handleAnswer(side, text);
-    };
+    btn.textContent = val.toUpperCase();
+    btn.onclick = () => answer(side, val);
     box.appendChild(btn);
   });
 }
 
-/* ===== LOGIC JAWABAN ===== */
-function handleAnswer(side, choice) {
-  const correct = questions[index].a;
-
-  if (choice === correct) {
+function answer(side, val) {
+  if (val === questions[index].a) {
     if (side === "left") {
       stepLeft++;
+      move("left", stepLeft);
       document.getElementById("step-left").innerText = stepLeft;
-      movePlayer("left", stepLeft);
     } else {
       stepRight++;
+      move("right", stepRight);
       document.getElementById("step-right").innerText = stepRight;
-      movePlayer("right", stepRight);
     }
   }
-
   index++;
-  if (index >= questions.length) {
-    alert("Game selesai!");
-    return;
-  }
-
-  renderQuestion();
+  if (index < questions.length) render();
 }
 
-/* ===== GERAK PEMAIN ===== */
-function movePlayer(side, step) {
+function move(side, step) {
   const player = document.getElementById("player-" + side);
-  const arenaWidth = document.querySelector(".arena").offsetWidth;
-  const maxMove = arenaWidth - 200;
-  const pos = 10 + (step / WIN) * maxMove;
-  player.style.left = pos + "px";
+  const arena = document.querySelector(".arena").offsetWidth;
+  const max = arena - 180;
+  player.style.left = (10 + (step / 16) * max) + "px";
 }
 
-/* START */
-renderQuestion();
+render();
 </script>
 
 </body>
