@@ -2,26 +2,231 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>TEST BUTTON IFP</title>
+<title>Balap Karung Digital – Have / Has</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(#e0f2fe, #dcfce7);
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  gap: 10px;
+  height: 100vh;
+  padding: 10px;
+}
+
+.panel {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.question {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.options button {
+  width: 100%;
+  font-size: 24px;
+  padding: 18px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #e5e7eb;
+  cursor: pointer;
+}
+
+.options button:hover {
+  background: #bfdbfe;
+}
+
+.arena {
+  position: relative;
+  background: #bbf7d0;
+  border-radius: 12px;
+}
+
+.track {
+  position: absolute;
+  left: 90px;
+  right: 90px;
+  top: 50%;
+  height: 6px;
+  background: white;
+  transform: translateY(-50%);
+}
+
+.finish {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  bottom: 10px;
+  width: 60px;
+  background: repeating-linear-gradient(
+    180deg,
+    white 0 20px,
+    red 20px 40px
+  );
+}
+
+.player {
+  position: absolute;
+  left: 10px;
+  transition: left 0.4s ease;
+  text-align: center;
+}
+
+.player img {
+  width: 80px;
+}
+
+.player.right {
+  top: 60%;
+}
+
+.player.left {
+  top: 40%;
+}
+</style>
 </head>
-<body style="font-family:Arial;text-align:center;padding:40px">
 
-<h2>TEST TOMBOL</h2>
+<body>
 
-<div id="box"></div>
+<div class="container">
+
+  <!-- TEAM A -->
+  <div class="panel">
+    <div>
+      <div class="question" id="q-left"></div>
+      <div class="options" id="opts-left"></div>
+    </div>
+    <div>Step: <strong id="step-left">0</strong> / 16</div>
+  </div>
+
+  <!-- ARENA -->
+  <div class="arena">
+    <div class="track"></div>
+    <div class="finish"></div>
+
+    <div class="player left" id="player-left">
+      <img src="https://iili.io/KmyOGhg.png">
+      <div>Team A</div>
+    </div>
+
+    <div class="player right" id="player-right">
+      <img src="https://iili.io/KmyOETF.png">
+      <div>Team B</div>
+    </div>
+  </div>
+
+  <!-- TEAM B -->
+  <div class="panel">
+    <div>
+      <div class="question" id="q-right"></div>
+      <div class="options" id="opts-right"></div>
+    </div>
+    <div>Step: <strong id="step-right">0</strong> / 16</div>
+  </div>
+
+</div>
 
 <script>
-const box = document.getElementById("box");
+/* ===== DATA SOAL ===== */
+const questions = [
+  { q: "The rabbit ___ long ears.", a: "has" },
+  { q: "I ___ two brothers.", a: "have" },
+  { q: "She ___ a red bag.", a: "has" },
+  { q: "They ___ a big house.", a: "have" },
+  { q: "My father ___ a car.", a: "has" },
+  { q: "We ___ an English class.", a: "have" },
+  { q: "The turtle ___ a hard shell.", a: "has" },
+  { q: "You ___ many friends.", a: "have" },
+  { q: "Andi ___ a bicycle.", a: "has" },
+  { q: "The students ___ books.", a: "have" },
+  { q: "My sister ___ a doll.", a: "has" },
+  { q: "Cats ___ sharp claws.", a: "have" },
+  { q: "He ___ a blue hat.", a: "has" },
+  { q: "We ___ homework.", a: "have" },
+  { q: "The boy ___ a rabbit.", a: "has" },
+  { q: "I ___ an idea.", a: "have" }
+];
 
-["A. HAS", "B. HAVE"].forEach(text => {
-  const btn = document.createElement("button");
-  btn.innerText = text;
-  btn.style.fontSize = "24px";
-  btn.style.padding = "20px";
-  btn.style.margin = "10px";
-  btn.onclick = () => alert("Kamu klik " + text);
-  box.appendChild(btn);
-});
+let index = 0;
+let stepLeft = 0;
+let stepRight = 0;
+const WIN = 16;
+
+/* ===== RENDER ===== */
+function renderQuestion() {
+  const q = questions[index];
+  document.getElementById("q-left").innerText = q.q;
+  document.getElementById("q-right").innerText = q.q;
+
+  createButtons("left");
+  createButtons("right");
+}
+
+function createButtons(side) {
+  const box = document.getElementById("opts-" + side);
+  box.innerHTML = "";
+
+  ["has", "have"].forEach(text => {
+    const btn = document.createElement("button");
+    btn.innerText = text.toUpperCase();
+    btn.onclick = function () {
+      handleAnswer(side, text);
+    };
+    box.appendChild(btn);
+  });
+}
+
+/* ===== LOGIC JAWABAN ===== */
+function handleAnswer(side, choice) {
+  const correct = questions[index].a;
+
+  if (choice === correct) {
+    if (side === "left") {
+      stepLeft++;
+      document.getElementById("step-left").innerText = stepLeft;
+      movePlayer("left", stepLeft);
+    } else {
+      stepRight++;
+      document.getElementById("step-right").innerText = stepRight;
+      movePlayer("right", stepRight);
+    }
+  }
+
+  index++;
+  if (index >= questions.length) {
+    alert("Game selesai!");
+    return;
+  }
+
+  renderQuestion();
+}
+
+/* ===== GERAK PEMAIN ===== */
+function movePlayer(side, step) {
+  const player = document.getElementById("player-" + side);
+  const arenaWidth = document.querySelector(".arena").offsetWidth;
+  const maxMove = arenaWidth - 200;
+  const pos = 10 + (step / WIN) * maxMove;
+  player.style.left = pos + "px";
+}
+
+/* START */
+renderQuestion();
 </script>
 
 </body>
