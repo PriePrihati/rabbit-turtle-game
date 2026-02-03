@@ -35,4 +35,134 @@
 
   .question {
     font-size: 22px;
-    margin: 20
+    margin: 20px 0;
+  }
+
+  .track {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lane {
+    display: flex;
+    gap: 5px;
+    margin: 10px 0;
+  }
+
+  .cell {
+    width: 35px;
+    height: 35px;
+    border: 2px solid #999;
+    background: white;
+  }
+
+  .A {
+    background: orange;
+  }
+
+  .B {
+    background: lightblue;
+  }
+
+  button {
+    padding: 10px 15px;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>🏃‍♂️🐇 BALAP KARUNG DIGITAL – HAVE / HAS 🐇🏃‍♂️</h1>
+
+<div class="container">
+
+  <!-- TEAM A -->
+  <div class="team">
+    <h2>🐇 Tim A</h2>
+    <div class="question" id="qA"></div>
+    <button onclick="move('A')">Rabbit A MAJU</button>
+  </div>
+
+  <!-- TRACK -->
+  <div class="track">
+    <div class="lane" id="laneA"></div>
+    <div class="lane" id="laneB"></div>
+  </div>
+
+  <!-- TEAM B -->
+  <div class="team">
+    <h2>🐇 Tim B</h2>
+    <div class="question" id="qB"></div>
+    <button onclick="move('B')">Rabbit B MAJU</button>
+  </div>
+
+</div>
+
+<script>
+let questions = [
+  "The rabbit ___ long ears.",
+  "I ___ two brothers.",
+  "She ___ a red bag.",
+  "They ___ a big house.",
+  "My father ___ a car.",
+  "We ___ an English class today.",
+  "The turtle ___ a hard shell.",
+  "You ___ many friends.",
+  "Andi ___ a new bicycle.",
+  "The students ___ books.",
+  "My sister ___ a doll.",
+  "Cats ___ sharp claws.",
+  "He ___ a blue hat.",
+  "We ___ homework today.",
+  "The boy ___ a pet rabbit.",
+  "I ___ an idea."
+];
+
+// 🔀 ACAK URUTAN SOAL
+questions = questions.sort(() => Math.random() - 0.5);
+
+let step = 0;
+let posA = 0;
+let posB = 0;
+
+const laneA = document.getElementById("laneA");
+const laneB = document.getElementById("laneB");
+
+for (let i = 0; i < 16; i++) {
+  laneA.innerHTML += `<div class="cell" id="A${i}"></div>`;
+  laneB.innerHTML += `<div class="cell" id="B${i}"></div>`;
+}
+
+function showQuestion() {
+  if (step >= 16) {
+    if (posA > posB) alert("🏆 Tim A MENANG!");
+    else if (posB > posA) alert("🏆 Tim B MENANG!");
+    else alert("🤝 SERI!");
+    return;
+  }
+  document.getElementById("qA").innerText = questions[step];
+  document.getElementById("qB").innerText = questions[step];
+}
+
+function move(team) {
+  if (team === "A" && posA < 16) {
+    document.getElementById(`A${posA}`).classList.add("A");
+    posA++;
+  }
+  if (team === "B" && posB < 16) {
+    document.getElementById(`B${posB}`).classList.add("B");
+    posB++;
+  }
+  step++;
+  showQuestion();
+}
+
+showQuestion();
+</script>
+
+</body>
+</html>
