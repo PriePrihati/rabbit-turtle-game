@@ -2,155 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Rabbit vs Rabbit – Have/Has Race</title>
+<title>Balap Karung Digital – Have / Has</title>
 <style>
   body {
     font-family: Arial, sans-serif;
+    background: #eef2f3;
+    margin: 0;
+    padding: 10px;
+  }
+
+  h1 {
     text-align: center;
-    background: #f2f2f2;
-  }
-  h1 { color: #333; }
-
-  .track {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
   }
 
-  .lane {
-    display: flex;
-    gap: 5px;
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    align-items: center;
   }
 
-  .cell {
-    width: 35px;
-    height: 35px;
-    border: 2px solid #999;
-    background: white;
-  }
-
-  .rabbitA {
-    background: orange;
-  }
-
-  .rabbitB {
-    background: lightblue;
-  }
-
-  .question-box {
+  .team {
     background: white;
     padding: 15px;
-    margin: 20px auto;
-    width: 80%;
     border-radius: 10px;
+    text-align: center;
   }
 
-  button {
-    padding: 10px 20px;
-    margin: 10px;
-    font-size: 16px;
-    cursor: pointer;
+  .team h2 {
+    margin-top: 0;
   }
 
-  .disabled {
-    opacity: 0.5;
-    pointer-events: none;
-  }
-</style>
-</head>
-
-<body>
-
-<h1>🐇 Rabbit vs Rabbit – Have / Has Race 🐇</h1>
-
-<h3>Rabbit A (Team 1)</h3>
-<div class="track" id="trackA"></div>
-
-<h3>Rabbit B (Team 2)</h3>
-<div class="track" id="trackB"></div>
-
-<div class="question-box">
-  <h2 id="question">Question here</h2>
-  <button onclick="answer('have','A')">Rabbit A: HAVE</button>
-  <button onclick="answer('has','A')">Rabbit A: HAS</button>
-  <br>
-  <button onclick="answer('have','B')">Rabbit B: HAVE</button>
-  <button onclick="answer('has','B')">Rabbit B: HAS</button>
-</div>
-
-<h2 id="status"></h2>
-
-<script>
-const questions = [
-  { q: "The rabbit ___ long ears.", a: "has" },
-  { q: "I ___ two brothers.", a: "have" },
-  { q: "She ___ a red bag.", a: "has" },
-  { q: "They ___ a big house.", a: "have" },
-  { q: "My father ___ a car.", a: "has" },
-  { q: "We ___ an English class today.", a: "have" },
-  { q: "The turtle ___ a hard shell.", a: "has" },
-  { q: "You ___ many friends.", a: "have" },
-  { q: "Andi ___ a new bicycle.", a: "has" },
-  { q: "The students ___ books.", a: "have" },
-  { q: "My sister ___ a doll.", a: "has" },
-  { q: "Cats ___ sharp claws.", a: "have" },
-  { q: "He ___ a blue hat.", a: "has" },
-  { q: "We ___ homework today.", a: "have" },
-  { q: "The boy ___ a pet rabbit.", a: "has" },
-  { q: "I ___ an idea.", a: "have" }
-];
-
-let index = 0;
-let posA = 0;
-let posB = 0;
-let locked = false;
-
-const trackA = document.getElementById("trackA");
-const trackB = document.getElementById("trackB");
-
-for (let i = 0; i < 16; i++) {
-  trackA.innerHTML += `<div class="cell" id="A${i}"></div>`;
-  trackB.innerHTML += `<div class="cell" id="B${i}"></div>`;
-}
-
-document.getElementById("question").innerText = questions[0].q;
-
-function updateTrack() {
-  document.querySelectorAll(".cell").forEach(c => c.className = "cell");
-  if (posA > 0) document.getElementById(`A${posA-1}`).classList.add("rabbitA");
-  if (posB > 0) document.getElementById(`B${posB-1}`).classList.add("rabbitB");
-}
-
-function answer(choice, team) {
-  if (locked) return;
-  locked = true;
-
-  if (choice === questions[index].a) {
-    if (team === "A") posA++;
-    else posB++;
-    document.getElementById("status").innerText =
-      `✅ Rabbit ${team} is correct and moves forward!`;
-  } else {
-    document.getElementById("status").innerText =
-      `❌ Rabbit ${team} is wrong!`;
-  }
-
-  updateTrack();
-
-  setTimeout(() => {
-    index++;
-    if (posA === 16 || posB === 16 || index === 16) {
-      if (posA > posB) alert("🏆 Rabbit A wins!");
-      else if (posB > posA) alert("🏆 Rabbit B wins!");
-      else alert("🤝 It's a draw!");
-      return;
-    }
-    document.getElementById("question").innerText = questions[index].q;
-    document.getElementById("status").innerText = "";
-    locked = false;
-  }, 1000);
-}
-</script>
-
-</body>
-</html>
+  .question {
+    font-size: 22px;
+    margin: 20
