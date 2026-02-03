@@ -2,49 +2,46 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Rabbit vs Turtle Race – Have / Has</title>
-
+<title>Rabbit vs Rabbit – Have/Has Race</title>
 <style>
   body {
     font-family: Arial, sans-serif;
-    background: #f4f7fb;
     text-align: center;
+    background: #f2f2f2;
   }
-
-  h1 {
-    margin-bottom: 10px;
-  }
+  h1 { color: #333; }
 
   .track {
-    width: 90%;
-    margin: 20px auto;
-    background: #ddd;
-    border-radius: 20px;
-    padding: 20px;
-    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
   }
 
   .lane {
-    height: 60px;
-    background: white;
-    border-radius: 30px;
-    margin: 15px 0;
-    position: relative;
+    display: flex;
+    gap: 5px;
   }
 
-  .runner {
-    position: absolute;
-    top: 5px;
-    left: 0;
-    font-size: 40px;
-    transition: left 0.5s ease;
+  .cell {
+    width: 35px;
+    height: 35px;
+    border: 2px solid #999;
+    background: white;
+  }
+
+  .rabbitA {
+    background: orange;
+  }
+
+  .rabbitB {
+    background: lightblue;
   }
 
   .question-box {
     background: white;
-    width: 90%;
-    margin: 20px auto;
     padding: 15px;
+    margin: 20px auto;
+    width: 80%;
     border-radius: 10px;
   }
 
@@ -55,46 +52,35 @@
     cursor: pointer;
   }
 
-  .info {
-    font-weight: bold;
-    margin-top: 10px;
+  .disabled {
+    opacity: 0.5;
+    pointer-events: none;
   }
 </style>
 </head>
 
 <body>
 
-<h1>🐇 Rabbit vs 🐢 Turtle Race</h1>
-<p><b>Material:</b> Have / Has (16 Questions)</p>
+<h1>🐇 Rabbit vs Rabbit – Have / Has Race 🐇</h1>
 
-<div class="track">
-  <div class="lane">
-    <div id="rabbit" class="runner">🐇</div>
-  </div>
-  <div class="lane">
-    <div id="turtle" class="runner">🐢</div>
-  </div>
-</div>
+<h3>Rabbit A (Team 1)</h3>
+<div class="track" id="trackA"></div>
+
+<h3>Rabbit B (Team 2)</h3>
+<div class="track" id="trackB"></div>
 
 <div class="question-box">
-  <p id="question">Click START to begin!</p>
-  <button onclick="answer('have')">HAVE</button>
-  <button onclick="answer('has')">HAS</button>
-  <div class="info" id="info"></div>
+  <h2 id="question">Question here</h2>
+  <button onclick="answer('have','A')">Rabbit A: HAVE</button>
+  <button onclick="answer('has','A')">Rabbit A: HAS</button>
+  <br>
+  <button onclick="answer('have','B')">Rabbit B: HAVE</button>
+  <button onclick="answer('has','B')">Rabbit B: HAS</button>
 </div>
 
-<button onclick="startGame()">▶ START GAME</button>
-<button onclick="resetGame()">🔄 RESET</button>
+<h2 id="status"></h2>
 
 <script>
-const TOTAL_STEPS = 16;
-const STEP_WIDTH = 100 / TOTAL_STEPS;
-
-let rabbitStep = 0;
-let turtleStep = 0;
-let currentQuestion = 0;
-let currentTurn = "rabbit";
-
 const questions = [
   { q: "The rabbit ___ long ears.", a: "has" },
   { q: "I ___ two brothers.", a: "have" },
@@ -114,74 +100,55 @@ const questions = [
   { q: "I ___ an idea.", a: "have" }
 ];
 
-function startGame() {
-  currentQuestion = 0;
-  currentTurn = "rabbit";
-  showQuestion();
-  document.getElementById("info").innerText = "Rabbit's turn 🐇";
+let index = 0;
+let posA = 0;
+let posB = 0;
+let locked = false;
+
+const trackA = document.getElementById("trackA");
+const trackB = document.getElementById("trackB");
+
+for (let i = 0; i < 16; i++) {
+  trackA.innerHTML += `<div class="cell" id="A${i}"></div>`;
+  trackB.innerHTML += `<div class="cell" id="B${i}"></div>`;
 }
 
-function showQuestion() {
-  if (currentQuestion >= questions.length) {
-    document.getElementById("question").innerText = "Game Over!";
-    return;
-  }
-  document.getElementById("question").innerText =
-    (currentQuestion + 1) + ". " + questions[currentQuestion].q;
+document.getElementById("question").innerText = questions[0].q;
+
+function updateTrack() {
+  document.querySelectorAll(".cell").forEach(c => c.className = "cell");
+  if (posA > 0) document.getElementById(`A${posA-1}`).classList.add("rabbitA");
+  if (posB > 0) document.getElementById(`B${posB-1}`).classList.add("rabbitB");
 }
 
-function answer(choice) {
-  if (currentQuestion >= questions.length) return;
+function answer(choice, team) {
+  if (locked) return;
+  locked = true;
 
-  const correct = questions[currentQuestion].a;
-
-  if (choice === correct) {
-    moveForward();
-  }
-
-  switchTurn();
-  currentQuestion++;
-  showQuestion();
-}
-
-function moveForward() {
-  if (currentTurn === "rabbit") {
-    rabbitStep++;
-    document.getElementById("rabbit").style.left =
-      (rabbitStep * STEP_WIDTH) + "%";
-    if (rabbitStep >= TOTAL_STEPS) endGame("🐇 Rabbit");
+  if (choice === questions[index].a) {
+    if (team === "A") posA++;
+    else posB++;
+    document.getElementById("status").innerText =
+      `✅ Rabbit ${team} is correct and moves forward!`;
   } else {
-    turtleStep++;
-    document.getElementById("turtle").style.left =
-      (turtleStep * STEP_WIDTH) + "%";
-    if (turtleStep >= TOTAL_STEPS) endGame("🐢 Turtle");
+    document.getElementById("status").innerText =
+      `❌ Rabbit ${team} is wrong!`;
   }
-}
 
-function switchTurn() {
-  currentTurn = currentTurn === "rabbit" ? "turtle" : "rabbit";
-  document.getElementById("info").innerText =
-    currentTurn === "rabbit"
-      ? "Rabbit's turn 🐇"
-      : "Turtle's turn 🐢";
-}
+  updateTrack();
 
-function endGame(winner) {
-  document.getElementById("question").innerText =
-    winner + " wins the race! 🎉";
-  document.getElementById("info").innerText = "Game Finished";
-}
-
-function resetGame() {
-  rabbitStep = 0;
-  turtleStep = 0;
-  currentQuestion = 0;
-  currentTurn = "rabbit";
-  document.getElementById("rabbit").style.left = "0%";
-  document.getElementById("turtle").style.left = "0%";
-  document.getElementById("question").innerText =
-    "Click START to begin!";
-  document.getElementById("info").innerText = "";
+  setTimeout(() => {
+    index++;
+    if (posA === 16 || posB === 16 || index === 16) {
+      if (posA > posB) alert("🏆 Rabbit A wins!");
+      else if (posB > posA) alert("🏆 Rabbit B wins!");
+      else alert("🤝 It's a draw!");
+      return;
+    }
+    document.getElementById("question").innerText = questions[index].q;
+    document.getElementById("status").innerText = "";
+    locked = false;
+  }, 1000);
 }
 </script>
 
