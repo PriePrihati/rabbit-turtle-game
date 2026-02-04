@@ -1,147 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Balap Karung Digital – Have / Has</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balap Karung Has / Have</title>
 
 <style>
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(#e0f2fe, #dcfce7);
+  background: #f2f7ff;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
 }
 
-.container {
-  display: flex;
-  height: 100vh;
-  padding: 10px;
-  box-sizing: border-box;
-  gap: 10px;
+h1 {
+  margin-bottom: 10px;
 }
 
-/* PANEL KIRI & KANAN */
-.panel {
-  width: 25%;
-  background: white;
-  border-radius: 12px;
-  padding: 15px;
+.game {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
+  align-items: center;
+}
+
+.team {
+  width: 35%;
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .question {
-  font-size: 22px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 15px;
-  min-height: 60px;
+  font-size: 20px;
+  margin: 20px 0;
 }
 
-.options button {
-  width: 100%;
-  font-size: 24px;
-  padding: 18px;
-  margin-bottom: 12px;
-  border-radius: 12px;
+button {
+  font-size: 20px;
+  padding: 12px 20px;
+  margin: 10px;
   border: none;
-  background: #e5e7eb;
+  border-radius: 10px;
   cursor: pointer;
 }
 
-.options button:active {
-  background: #93c5fd;
-}
+.has { background: #4caf50; color: white; }
+.have { background: #2196f3; color: white; }
 
-/* ARENA */
-.arena {
-  width: 50%;
-  background: #bbf7d0;
-  border-radius: 12px;
-  position: relative;
+.race {
+  width: 25%;
 }
 
 .track {
+  height: 300px;
+  position: relative;
+}
+
+.runner {
+  font-size: 40px;
   position: absolute;
-  left: 80px;
-  right: 80px;
-  top: 50%;
-  height: 6px;
-  background: white;
-  transform: translateY(-50%);
+  left: 40%;
 }
 
-.finish {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  bottom: 10px;
-  width: 60px;
-  background: repeating-linear-gradient(
-    180deg,
-    white 0 20px,
-    red 20px 40px
-  );
-}
+#rabbit { top: 0; }
+#turtle { top: 0; }
 
-.player {
-  position: absolute;
-  left: 10px;
-  transition: left 0.4s ease;
-  text-align: center;
-}
-
-.player img {
-  width: 80px;
-}
-
-.player.left {
-  top: 40%;
-}
-
-.player.right {
-  top: 60%;
+.progress {
+  font-weight: bold;
+  margin-top: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<h1>🐰🐢 BALAP KARUNG HAS / HAVE 🐢🐰</h1>
+<p>Tim Rabbit vs Tim Turtle – jawab lebih cepat!</p>
+
+<div class="game">
 
   <!-- TEAM A -->
-  <div class="panel">
-    <div>
-      <div class="question" id="q-left"></div>
-      <div class="options" id="opts-left"></div>
-    </div>
-    <div>Step: <strong id="step-left">0</strong> / 16</div>
+  <div class="team">
+    <h2>🐰 Tim Rabbit</h2>
+    <div id="qA" class="question"></div>
+    <button class="has" onclick="answer('A','has')">A. Has</button>
+    <button class="have" onclick="answer('A','have')">B. Have</button>
+    <div id="pA" class="progress">0 / 16</div>
   </div>
 
-  <!-- ARENA -->
-  <div class="arena">
-    <div class="track"></div>
-    <div class="finish"></div>
-
-    <div class="player left" id="player-left">
-      <img src="https://iili.io/KmyOGhg.png">
-      <div>Team A</div>
-    </div>
-
-    <div class="player right" id="player-right">
-      <img src="https://iili.io/KmyOETF.png">
-      <div>Team B</div>
+  <!-- RACE -->
+  <div class="race">
+    <div class="track">
+      <div id="rabbit" class="runner">🐰</div>
+      <div id="turtle" class="runner">🐢</div>
     </div>
   </div>
 
   <!-- TEAM B -->
-  <div class="panel">
-    <div>
-      <div class="question" id="q-right"></div>
-      <div class="options" id="opts-right"></div>
-    </div>
-    <div>Step: <strong id="step-right">0</strong> / 16</div>
+  <div class="team">
+    <h2>🐢 Tim Turtle</h2>
+    <div id="qB" class="question"></div>
+    <button class="has" onclick="answer('B','has')">A. Has</button>
+    <button class="have" onclick="answer('B','have')">B. Have</button>
+    <div id="pB" class="progress">0 / 16</div>
   </div>
 
 </div>
@@ -153,65 +115,60 @@ const questions = [
   { q: "She ___ a red bag.", a: "has" },
   { q: "They ___ a big house.", a: "have" },
   { q: "My father ___ a car.", a: "has" },
-  { q: "We ___ an English class.", a: "have" },
+  { q: "We ___ an English class today.", a: "have" },
   { q: "The turtle ___ a hard shell.", a: "has" },
   { q: "You ___ many friends.", a: "have" },
-  { q: "Andi ___ a bicycle.", a: "has" },
+  { q: "Andi ___ a new bicycle.", a: "has" },
   { q: "The students ___ books.", a: "have" },
   { q: "My sister ___ a doll.", a: "has" },
   { q: "Cats ___ sharp claws.", a: "have" },
   { q: "He ___ a blue hat.", a: "has" },
-  { q: "We ___ homework.", a: "have" },
-  { q: "The boy ___ a rabbit.", a: "has" },
+  { q: "We ___ homework today.", a: "have" },
+  { q: "The boy ___ a pet rabbit.", a: "has" },
   { q: "I ___ an idea.", a: "have" }
 ];
 
-let index = 0;
-let stepLeft = 0;
-let stepRight = 0;
+// SOAL URUT – TIDAK DIAKAC
+let qA = [...questions];
+let qB = [...questions];
 
-function render() {
-  document.getElementById("q-left").innerText = questions[index].q;
-  document.getElementById("q-right").innerText = questions[index].q;
-  createButtons("left");
-  createButtons("right");
-}
+let iA = 0;
+let iB = 0;
 
-function createButtons(side) {
-  const box = document.getElementById("opts-" + side);
-  box.innerHTML = "";
-  ["has", "have"].forEach(val => {
-    const btn = document.createElement("button");
-    btn.textContent = val.toUpperCase();
-    btn.onclick = () => answer(side, val);
-    box.appendChild(btn);
-  });
-}
+document.getElementById("qA").innerText = qA[iA].q;
+document.getElementById("qB").innerText = qB[iB].q;
 
-function answer(side, val) {
-  if (val === questions[index].a) {
-    if (side === "left") {
-      stepLeft++;
-      move("left", stepLeft);
-      document.getElementById("step-left").innerText = stepLeft;
-    } else {
-      stepRight++;
-      move("right", stepRight);
-      document.getElementById("step-right").innerText = stepRight;
+function answer(team, choice) {
+
+  if (team === "A") {
+    if (qA[iA].a === choice) {
+      iA++;
+      move("rabbit", iA);
     }
+    if (iA < 16) {
+      document.getElementById("qA").innerText = qA[iA].q;
+    }
+    document.getElementById("pA").innerText = iA + " / 16";
   }
-  index++;
-  if (index < questions.length) render();
+
+  if (team === "B") {
+    if (qB[iB].a === choice) {
+      iB++;
+      move("turtle", iB);
+    }
+    if (iB < 16) {
+      document.getElementById("qB").innerText = qB[iB].q;
+    }
+    document.getElementById("pB").innerText = iB + " / 16";
+  }
+
+  if (iA === 16) alert("🐰 Tim Rabbit MENANG!");
+  if (iB === 16) alert("🐢 Tim Turtle MENANG!");
 }
 
-function move(side, step) {
-  const player = document.getElementById("player-" + side);
-  const arena = document.querySelector(".arena").offsetWidth;
-  const max = arena - 180;
-  player.style.left = (10 + (step / 16) * max) + "px";
+function move(id, step) {
+  document.getElementById(id).style.top = (step * 16) + "px";
 }
-
-render();
 </script>
 
 </body>
